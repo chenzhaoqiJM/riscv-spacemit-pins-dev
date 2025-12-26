@@ -52,7 +52,7 @@ write(f"{PWM_BASE}/enable", 1)
 ctx = zmq.Context()
 sock = ctx.socket(zmq.REP)
 sock.bind("ipc:///run/pwm.sock")
-os.chmod("/run/pwm.sock", 0o666)
+os.chmod("/run/pwm.sock", 0o666) # 赋予权限，非常重要，否则普通用户无法使用服务
 
 while True:
     msg = sock.recv_json()
