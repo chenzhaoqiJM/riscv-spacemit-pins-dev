@@ -26,6 +26,10 @@ def write(path, value):
     with open(path, "w") as f:
         f.write(str(value))
 
+def read(path):
+    with open(path, "r") as f:
+        return f.read().strip()
+
 def ensure_pwm_exported():
     if not os.path.exists(PWM_BASE):
         # export
@@ -43,7 +47,11 @@ def ensure_pwm_exported():
 ensure_pwm_exported()
 
 period = 1_000_000  # ns
-write(f"{PWM_BASE}/enable", 0)          # 先关
+enable_path = f"{PWM_BASE}/enable"
+
+# 只有在当前值不是 0 时才写 0
+if read(enable_path) != "0":
+    write(enable_path, 0)
 write(f"{PWM_BASE}/period", period)
 write(f"{PWM_BASE}/duty_cycle", 0)
 write(f"{PWM_BASE}/enable", 1)
