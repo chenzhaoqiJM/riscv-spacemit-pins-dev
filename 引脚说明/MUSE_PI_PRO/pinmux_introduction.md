@@ -25,7 +25,7 @@
 |     GPIO78     |          |         |   ssp2_rxd    |   ssp3_rxd    | i2c3_sda  |  uart8_rts_n  |          |
 |     GPIO75     |          |         |   ssp2_sclk   |   ssp3_sclk   |  can_tx0  |   uart8_txd   |          |
 |     GPIO39     |          |         |  gmac1_tx_d3  |   i2c3_sda    |           |     pwm9      |          |
-|     GPIO51     |          |         |               |  r_uart1_txd  |           |   i2c4_scl    |          |
+|     GPIO51     |    -     |         |               |  r_uart1_txd  |           |   i2c4_scl    |          |
 |     GPIO52     |          |         |               |  r_uart1_rxd  |           |   i2c4_sda    |          |
 |     GPIO47     |          |         |               |   r_can_tx    |           |   i2c3_scl    | one_wire |
 |     GPIO48     |          |         |               |   r_can_rx    |  r_ir_rx  |   i2c3_sda    |          |
@@ -34,9 +34,9 @@
 |     GPIO74     |          |         |               |   rcpu_pwm9   |   dout1   |  PCIe2_waken  |          |
 |     GPIO91     |          |         |    mn_clk2    |  vcxo_out_0   |  dsi_te   |               |          |
 |     GPIO92     |          |         |    mn_clk     |     pwm7      | smpn_rstb |               |          |
-|     GPIO49     |          |         |               | r_uart1_cts_n |           |               |          |
+|     GPIO49     |    -     |         |               | r_uart1_cts_n |           |               |          |
 |     GPIO76     |          |         |   ssp2_frm    |   ssp3_frm    |  can_rx0  |   uart8_rxd   | i2c4_sda |
-|     GPIO50     |          |         |               | r_uart1_rts_n |           |               |          |
+|     GPIO50     |    -     |         |               | r_uart1_rts_n |           |               |          |
 |     GPIO38     |          |         |  gmac1_tx_d2  |   i2c3_scl    |           |     pwm8      |          |
 |     GPIO34     |          |         |  gmac1_rx_d3  |   uart4_rxd   |   pwm4    | PCIe1_clkreqn |          |
 |     GPIO35     |          |         |  gmac1_tx_d0  |  uart4_cts_n  |   pwm5    | PCIe2_perstn  |          |
