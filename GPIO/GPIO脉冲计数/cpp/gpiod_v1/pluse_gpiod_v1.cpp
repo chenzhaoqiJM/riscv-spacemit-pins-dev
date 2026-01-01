@@ -7,6 +7,8 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <condition_variable>
+
 
 /* ================== EncoderSpeedMeter ================== */
 
@@ -61,6 +63,7 @@ private:
     /* ---------- 线程通信 ---------- */
     std::queue<std::pair<double, uint64_t>> queue_;
     std::atomic<bool> stop_flag_{false};
+    std::condition_variable cv_;
 
     /* ---------- 线程 ---------- */
     std::thread interrupt_thread_;
@@ -102,6 +105,8 @@ private:
             if (has_rising_) {
                 pulse_count_++;
                 has_rising_ = false;
+                // ★ 通知：一个完整脉冲结束了
+                cv_.notify_all();
             }
         }
     }
@@ -121,7 +126,13 @@ private:
 
             uint64_t pulse = 0;
             {
-                std::lock_guard<std::mutex> guard(lock_);
+                std::unique_lock<std::mutex> lk(lock_);
+
+                // ★ 如果正在数一个脉冲，就等它完成
+                cv_.wait(lk, [&] {
+                    return !has_rising_;
+                });
+
                 pulse = pulse_count_;
                 pulse_count_ = 0;
             }
