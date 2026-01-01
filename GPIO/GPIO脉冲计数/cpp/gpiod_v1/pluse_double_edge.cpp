@@ -96,20 +96,20 @@ private:
     /* ================== 中断逻辑 ================== */
     void handle_event(const gpiod::line_event& event)
     {
+        static auto last_time = std::chrono::steady_clock::now();
+        auto now = std::chrono::steady_clock::now();
+        auto dt  = std::chrono::duration<double, std::milli>(now - last_time).count();
+    
+        // 如果距离上次事件小于最小间隔（例如 2ms），则忽略
+        if (dt < 2.0)  // 2毫秒，可根据编码器特性调整
+            return;
+    
+        last_time = now;
+    
         std::lock_guard<std::mutex> guard(lock_);
-
-        if (event.event_type == gpiod::line_event::RISING_EDGE) {
-            has_rising_ = true;
-        }
-        else if (event.event_type == gpiod::line_event::FALLING_EDGE) {
-            if (has_rising_) {
-                pulse_count_++;
-                has_rising_ = false;
-                // ★ 通知：一个完整脉冲结束了
-                cv_.notify_all();
-            }
-        }
+        pulse_count_++;
     }
+    
 
     /* ================== 采样线程 ================== */
     void sampler_loop()
@@ -126,12 +126,7 @@ private:
 
             uint64_t pulse = 0;
             {
-                std::unique_lock<std::mutex> lk(lock_);
-
-                // ★ 如果正在数一个脉冲，就等它完成
-                cv_.wait(lk, [&] {
-                    return !has_rising_;
-                });
+                std::lock_guard<std::mutex> guard(lock_);
 
                 pulse = pulse_count_;
                 pulse_count_ = 0;
@@ -163,9 +158,10 @@ private:
             double rps           = motor_turns / dt;
 
             printf(
-                "脉冲数: %lu | dt: %.3f ms | 转速: %.2f RPM\n",
+                "脉冲数: %lu | dt: %.3f ms | 转速: %.2f 转/s | 转速: %.2f RPM\n",
                 pulse,
                 dt * 1000.0,
+                rps,
                 rps * 60.0
             );
         }
