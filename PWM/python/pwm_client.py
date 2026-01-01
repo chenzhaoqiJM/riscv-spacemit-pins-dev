@@ -1,8 +1,12 @@
-import zmq
+import socket
+import json
 
-ctx = zmq.Context()
-sock = ctx.socket(zmq.REQ)
-sock.connect("ipc:///run/pwm.sock")
+SOCK_PATH = "/run/pwm_control_uds.sock"
+
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+sock.connect(SOCK_PATH)
+
+
 
 print("输入 duty (0.0 ~ 1.0)，输入 q 退出")
 
@@ -23,7 +27,9 @@ while True:
         continue
 
     # REQ → REP：send 后必须 recv
-    sock.send_json({"duty": duty})
-    reply = sock.recv_json()
+    sock.sendall(json.dumps({"duty": duty}).encode())
+    resp = sock.recv(256)
 
-    print("✔ 回复:", reply)
+    print("✔ 回复:", json.loads(resp.decode()))
+
+sock.close()

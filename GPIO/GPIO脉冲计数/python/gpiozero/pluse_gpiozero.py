@@ -42,7 +42,7 @@ class EncoderSpeedMeter:
         Device.pin_factory = LGPIOFactory(chip=chip)
         self._pulse = DigitalInputDevice(gpio_pin)
 
-        # 注册中断
+        # 注册中断, 上升沿
         self._pulse.when_activated = self._pulse_detected
 
         # 线程
