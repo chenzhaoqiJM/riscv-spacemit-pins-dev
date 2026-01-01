@@ -1,5 +1,10 @@
 # GPIO调试
 
+## 依赖安装
+
+```
+sudo apt install libgpiod-dev liblgpio-dev python3-gpiozero
+```
 
 
 ## 查看gpio信息
